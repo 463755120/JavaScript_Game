@@ -11,6 +11,12 @@
             border: 1px solid #CCC
         }
     </style>
+    <script src="./utils.js"></script>
+    <script src="./game.js"></script>
+    <script src="./ball.js"></script>
+    <script src="./paddle.js"></script>
+    <script src="./block.js"></script>
+    <script src="./level.js"></script>
 </head>
 
 <body>
@@ -18,115 +24,42 @@
 
     </canvas>
     <script>
-        var log = console.log.bind(console)
-        var imageFromPath = function (path) {
-            var img = new Image()
-            img.src = path
-            return img
+        var loadLevel = function (n) {
+            n = n - 1
+            var level = levels[n]
+            var blocks = []
+            for (var i = 0; i < level.length; i++) {
+                var p = level[i]
+                var b = Block(p)
+
+                blocks.push(b)
+            }
+            log(blocks)
+            return blocks
         }
-        var Paddle = function () {
-            var image = imageFromPath('paddle.png')
-            var o = {
-                image: image,
-                x: 100,
-                y: 250,
-                speed: 15,
+        var blocks = []
+        var enableDebugMode = function (enable) {
+            if (!enable) {
+                return
             }
-            var paddle = o
-            o.moveLeft = function () {
-                paddle.x -= paddle.speed
-            }
-            o.moveRight = function () {
-                paddle.x += paddle.speed
-            }
-            o.collide = function (ball) {
-                if (ball.y + ball.image.height > o.y) {
-                    if (ball.x > o.x && ball.x < o.x + o.image.width) {
-                        log('相撞')
-                        return true
-                    }
+            window.paused = false
+            window.addEventListener('keydown', function (event) {
+                var k = event.key
+                if (k == 'p') {
+                    // 暂停功能
+                    window.paused = !window.paused
+                } else if ('1234567'.includes(k)) {
+                    // 为了 debug 临时加的载入关卡功能
+                    blocks = loadLevel(Number(k))
                 }
-                return false
-            }
-            return o
-        }
-        var Ball = function () {
-            var image = imageFromPath('ball.png')
-            var o = {
-                image: image,
-                x: 100,
-                y: 200,
-                speedX: 10,
-                speedY: 10,
-                //暂停功能
-                fired: false,
-            }
-            o.fire = function () {
-                o.fired = true
-            }
-            o.move = function () {
-                if (o.fired) {
-                    // log('move')
-                    if (o.x < 0 || o.x > 400) {
-                        o.speedX = -o.speedX
-                    }
-                    if (o.y < 0 || o.y > 300) {
-                        o.speedY = -o.speedY
-                    }
-                    // move
-                    o.x += o.speedX
-                    o.y += o.speedY
-                }
-            }
-            return o
-        }
-        //game
-        var Game = function () {
-            var g = {
-                actions: {},
-                keydowns: {},
-            }
-            var canvas = document.querySelector('#id-canvas')          
-            var context = canvas.getContext('2d')
-            g.canvas = canvas
-            g.context = context
-            //draw
-            g.drawImage = function (guaImage) {
-                g.context.drawImage(guaImage.image, guaImage.x, guaImage.y)
-            }
-            //绑定按键事件
-            window.addEventListener('keydown', function () {
-                g.keydowns[event.key] = true
             })
-            window.addEventListener('keyup', function () {
-                g.keydowns[event.key] = false
-            })
-            g.registerAction = function (key, callback) {
-                g.actions[key] = callback
-            }
-            // timer
-            setInterval(function () {
-                var actions = Object.keys(g.actions)
-                for (var i = 0; i < actions.length; i++) {
-                    var key = actions[i]
-                    if (g.keydowns[key]) {
-                        //如果按键按下，调用注册的 action
-                        g.actions[key]()
-                    }
-                }
-                //update
-                g.update()
-                //clear
-                context.clearRect(0, 0, canvas.width, canvas.height)
-                //draw
-                g.draw()
-            }, 1000 / 30)
-            return g
         }
         var __main = function () {
-            var game = Game()
+            enableDebugMode(true)
+            var game = Game(30)
             var paddle = Paddle()
             var ball = Ball()
+             blocks = loadLevel(1)
 
             game.registerAction('a', function () {
                 paddle.moveLeft()
@@ -139,17 +72,37 @@
             })
 
             game.update = function () {
+                if (window.paused) {
+                    return
+                }
                 ball.move()
                 //判断相撞
                 if (paddle.collide(ball)) {
                     //反弹
                     ball.speedY *= -1
                 }
+                //判断球和墙相撞
+                for (var i = 1; i < blocks.length; i++) {
+                    var block = blocks[i]
+                    if (block.collide(ball)) {
+                        block.kill()
+                        ball.changgespeed()
+                    }
+                }
+
             }
             game.draw = function () {
                 //draw
                 game.drawImage(paddle)
                 game.drawImage(ball)
+                for (var i = 1; i < blocks.length; i++) {
+                    var block = blocks[i]
+                    if (block.alive) {
+                        game.drawImage(block)
+                    }
+                }
+
+
             }
         }
         __main()
