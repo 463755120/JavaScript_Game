@@ -1,112 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <style media="screen">
-        canvas {
-            border: 1px solid #CCC
-        }
-    </style>
-    <script src="./utils.js"></script>
-    <script src="./game.js"></script>
-    <script src="./ball.js"></script>
-    <script src="./paddle.js"></script>
-    <script src="./block.js"></script>
-    <script src="./level.js"></script>
-</head>
-
-<body>
-    <canvas id="id-canvas" width="400" height="300">
-
-    </canvas>
-    <script>
-        var loadLevel = function (n) {
-            n = n - 1
-            var level = levels[n]
-            var blocks = []
-            for (var i = 0; i < level.length; i++) {
-                var p = level[i]
-                var b = Block(p)
-
-                blocks.push(b)
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>game 1</title>
+        <style media="screen">
+            canvas {
+                border: 1px black solid;
             }
-            log(blocks)
-            return blocks
-        }
-        var blocks = []
-        var enableDebugMode = function (enable) {
-            if (!enable) {
-                return
-            }
-            window.paused = false
-            window.addEventListener('keydown', function (event) {
-                var k = event.key
-                if (k == 'p') {
-                    // 暂停功能
-                    window.paused = !window.paused
-                } else if ('1234567'.includes(k)) {
-                    // 为了 debug 临时加的载入关卡功能
-                    blocks = loadLevel(Number(k))
-                }
-            })
-        }
-        var __main = function () {
-            enableDebugMode(true)
-            var game = Game(30)
-            var paddle = Paddle()
-            var ball = Ball()
-             blocks = loadLevel(1)
-
-            game.registerAction('a', function () {
-                paddle.moveLeft()
-            })
-            game.registerAction('d', function () {
-                paddle.moveRight()
-            })
-            game.registerAction('f', function () {
-                ball.fire()
-            })
-
-            game.update = function () {
-                if (window.paused) {
-                    return
-                }
-                ball.move()
-                //判断相撞
-                if (paddle.collide(ball)) {
-                    //反弹
-                    ball.speedY *= -1
-                }
-                //判断球和墙相撞
-                for (var i = 1; i < blocks.length; i++) {
-                    var block = blocks[i]
-                    if (block.collide(ball)) {
-                        block.kill()
-                        ball.changgespeed()
-                    }
-                }
-
-            }
-            game.draw = function () {
-                //draw
-                game.drawImage(paddle)
-                game.drawImage(ball)
-                for (var i = 1; i < blocks.length; i++) {
-                    var block = blocks[i]
-                    if (block.alive) {
-                        game.drawImage(block)
-                    }
-                }
-
-
-            }
-        }
-        __main()
-    </script>
-</body>
-
+        </style>
+        <script src='utils.js'></script>
+        <script src='game.js'></script>
+        <script src='paddle.js'></script>
+        <script src='ball.js'></script>
+        <script src='block.js'></script>
+        <script src='level.js'></script>
+    </head>
+    <body>
+        <canvas id="id-canvas" width="400" height="300"></canvas>
+        <hr>
+        <input id=id-input-speed type="range" value="1">
+        <div class="">
+            <!-- <textarea id="id-text-log" rows="20" cols="50"></textarea> -->
+        </div>
+        <script src=main.js></script>
+    </body>
 </html>
