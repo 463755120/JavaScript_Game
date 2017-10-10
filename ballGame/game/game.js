@@ -92,7 +92,7 @@ var Game = function(fps, images, runCallback) {
             runloop()
         }, 1000/fps)
     }
-    //游戏结束
+    //替换游戏状态
     g.replaceScene = function(scene){
         g.scene = scene
     }

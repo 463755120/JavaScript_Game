@@ -40,7 +40,7 @@ var Scene = function(game){
         ball.move()
         //判断球跌入挡板下面
         if(ball.y> paddle.y){
-            var end = SceneEnd(game)
+            var end = new SceneEnd(game)
             game.replaceScene(end)
         }
         //判断相撞
