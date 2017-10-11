@@ -20,7 +20,7 @@ class Game {
         this.init()
     }
     drawImage(Image){
-        this.context.drawImage(Image.image, Image.x, Image.y)
+        this.context.drawImage(Image.texture, Image.x, Image.y)
     }
     // update
     update() {
@@ -55,15 +55,15 @@ class Game {
             g.runloop()
         }, 1000/window.fps)
     }
-    imageByName(name){
+    textureByName(name){
         var g = this
         var img = g.images[name]
-        var image = {
-            w: img.width,
-            h: img.height,
-            image: img,
-        }
-        return image
+        // var image = {
+        //     w: img.width,
+        //     h: img.height,
+        //     image: img,
+        // }
+        return img
     }
     runWithScene(scene) {
         var g = this

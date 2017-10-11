@@ -1,14 +1,14 @@
-var loadLevel = function(game, n) {
-    n = n - 1
-    var level = levels[n]
-    var blocks = []
-    for (var i = 0; i < level.length; i++) {
-        var p = level[i]
-        var b = Block(game, p)
-        blocks.push(b)
-    }
-    return blocks
-}
+// var loadLevel = function(game, n) {
+//     n = n - 1
+//     var level = levels[n]
+//     var blocks = []
+//     for (var i = 0; i < level.length; i++) {
+//         var p = level[i]
+//         var b = Block(game, p)
+//         blocks.push(b)
+//     }
+//     return blocks
+// }
 var enableDebugMode = function(game,enable) {
     if (!enable) {
         return
@@ -21,7 +21,7 @@ var enableDebugMode = function(game,enable) {
             window.paused = !window.paused
         } else if ('1234567'.includes(k)) {
             // 为了 debug 临时加的载入关卡功能
-            blocks = loadLevel(game,Number(k))
+            //blocks = loadLevel(game,Number(k))
         }
     })
     //控制速度
@@ -32,16 +32,17 @@ var enableDebugMode = function(game,enable) {
 }
 var __main = function() { 
     var images = {
-        ball: 'img/ball.png',
-        block: 'img/block.png',
-        paddle: 'img/paddle.png',
+        bullet: 'img/bullet_user.png',
+        cloud: 'img/cloud.png',
+        player: 'img/player_plane.png',
+        sky:'img/sky_bg.jpg'
     }       
     var game = new Game(30,images,function(g){      
-        var scene =  new SceneTitle(g)
+        var scene =  new Scene(g)
         g.runWithScene(scene)
         
     })
    
-    enableDebugMode(game,true)
+    //enableDebugMode(game,true)
 }
 __main()
