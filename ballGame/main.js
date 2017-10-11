@@ -36,7 +36,7 @@ var __main = function() {
         block: 'img/block.png',
         paddle: 'img/paddle.png',
     }       
-    var game = Game(30,images,function(g){      
+    var game = new Game(30,images,function(g){      
         var scene =  new SceneTitle(g)
         g.runWithScene(scene)
         

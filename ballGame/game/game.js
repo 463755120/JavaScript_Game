@@ -1,43 +1,41 @@
-
-var Game = function(fps, images, runCallback) {
-    // images 是一个对象, 里面是图片的引用名字和图片路径
-    // 程序会在所有图片载入成功后才运行
-    var g = {
-        scene:null,
-        actions: {},
-        keydowns: {},
-        images: {},
+class Game {
+    constructor(fps, images, runCallback){
+        window.fps = fps
+        this.images = images
+        this.runCallback = runCallback
+        this.scene = null
+        this.actions = {}
+        this.keydowns = {}
+        this.canvas = document.querySelector('#id-canvas')
+        this.context = this.canvas.getContext('2d')
+        //events
+        var self = this
+        //两种写法
+        window.addEventListener('keydown', event=>{
+            this.keydowns[event.key] = true
+        })
+        window.addEventListener('keyup', function(event){
+            self.keydowns[event.key] = false
+        })
+        this.init()
     }
-    var canvas = document.querySelector('#id-canvas')
-    var context = canvas.getContext('2d')
-    g.canvas = canvas
-    g.context = context
-    // draw
-    g.drawImage = function(guaImage) {
-        g.context.drawImage(guaImage.image, guaImage.x, guaImage.y)
+    drawImage(Image){
+        this.context.drawImage(Image.image, Image.x, Image.y)
     }
-    // events
-    window.addEventListener('keydown', function(event){
-        g.keydowns[event.key] = true
-    })
-    window.addEventListener('keyup', function(event){
-        g.keydowns[event.key] = false
-    })
     // update
-    g.update = function (){
-        g.scene.update()
+    update() {
+        this.scene.update()
     }
-    //draw
-    g.draw = function (){
-        g.scene.draw()
+    // draw
+    draw() {
+        this.scene.draw()
     }
-    g.registerAction = function(key, callback) {
-        g.actions[key] = callback
+    //
+    registerAction(key, callback) {
+        this.actions[key] = callback
     }
-    // timer
-    window.fps = 30
-    var runloop = function() {
-        // events
+    runloop(){
+        var g = this
         var actions = Object.keys(g.actions)
         for (var i = 0; i < actions.length; i++) {
             var key = actions[i]
@@ -49,35 +47,16 @@ var Game = function(fps, images, runCallback) {
         // update
         g.update()
         // clear
-        context.clearRect(0, 0, canvas.width, canvas.height)
+        g.context.clearRect(0, 0, g.canvas.width, g.canvas.height)
         // draw
         g.draw()
         // next run loop
         setTimeout(function(){
-            runloop()
+            g.runloop()
         }, 1000/window.fps)
     }
-
-    //
-    var loads = []
-    // 预先载入所有图片
-    var names = Object.keys(images)
-    for (var i = 0; i < names.length; i++) {
-        let name = names[i]
-        var path = images[name]
-        let img = new Image()
-        img.src = path
-        img.onload = function() {
-            // 存入 g.images 中
-            g.images[name] = img
-            // 所有图片都成功载入之后, 调用 run
-            loads.push(1)
-            if (loads.length == names.length) {
-                g.__start()
-            }
-        }
-    }
-    g.imageByName = function(name) {
+    imageByName(name){
+        var g = this
         var img = g.images[name]
         var image = {
             w: img.width,
@@ -86,21 +65,42 @@ var Game = function(fps, images, runCallback) {
         }
         return image
     }
-    g.runWithScene = function (scene){
+    runWithScene(scene) {
+        var g = this
         g.scene = scene
+        // 开始运行程序
         setTimeout(function(){
-            runloop()
-        }, 1000/fps)
+            g.runloop()
+        }, 1000/window.fps)
     }
-    //替换游戏状态
-    g.replaceScene = function(scene){
-        g.scene = scene
+    replaceScene(scene) {
+        this.scene = scene
     }
-    //这是一个内部函数，不需要被外界调用
-    g.__start = function(scene) {
-        runCallback(g)
-        // 开始运行程序       
+    __start(scene) {
+        this.runCallback(this)
     }
+    //初始函数
+    init(){
+        var g = this
+        var loads = []
+        // 预先载入所有图片
+        var names = Object.keys(g.images)
+        for (var i = 0; i < names.length; i++) {
+            let name = names[i]
+            var path = g.images[name]
+            let img = new Image()
+            img.src = path
+            img.onload = function() {
+                // 存入 g.images 中
+                g.images[name] = img
+                // 所有图片都成功载入之后, 调用 run
+                loads.push(1)
+                if (loads.length == names.length) {
+                    g.__start()
+                }
+            }
+        }
 
-    return g
+    }
+    
 }
