@@ -1,23 +1,149 @@
+const config = {
+    player_speed:10,
+    cloud_speed:1,
+    bullet_speed:1,
+}
+class Bullet extends GameImage{
+    constructor(game){
+        super(game,'bullet')
+        this.setup()
+    }
+    setup(){
+        this.speed = config.bullet_speed
+    }
+    update(){
+        this.y -=this.speed
+    }
+}
+class Plyer extends GameImage{
+    constructor(game){
+        super(game,'player')
+        this.setUp()
+    }
+    setUp(){
+        this.speed = 10
+        this.cooldown = 0
+    }
+    update(){
+        this.speed = config.player_speed
+        if(this.cooldown > 0){
+            this.cooldown --
+        }
+    }
+    fire(){
+        if(this.cooldown == 0){
+            this.cooldown = 3
+            var x = this.x + this.x/2
+            var y = this.y
+            var b = new Bullet(this.game)
+            b.x = x
+            b.y = y
+            this.gameScene.addElement(b)
+        }       
+    }
+    moveLeft(){
+        this.x -= this.speed
+    }
+    moveRight(){
+        this.x += this.speed
+    }
+    moveDown(){
+        this.y += this.speed
+    }
+    moveUp(){
+        this.y -= this.speed
+    }
+}
+class Enemy extends GameImage{
+    constructor(game){    
+        var type = randomBetween(0,1)        
+        var name = 'enemy'+type
+        super(game,name)   
+        this.setUp()
+    }
+    setUp(){        
+        this.speed = randomBetween(2,5)
+        this.x = randomBetween(0,400)
+        this.y = randomBetween(0,100)
+    }
+    update(){
+        this.y += this.speed
+        if(this.y>600){
+            this.setUp()
+        }
+    }
+}
+class Cloud extends GameImage{
+    constructor(game){    
+        super(game,'cloud')   
+        this.setUp()
+    }
+    setUp(){        
+        this.speed = 1
+        this.x = randomBetween(0,400)
+        this.y = randomBetween(0,100)
+    }
+    update(){
+        this.speed = config.cloud_speed
+        this.y += this.speed
+        if(this.y>600){
+            //重新生成一遍
+            this.setUp()
+        }
+    }
+}
 class Scene extends GameScene{
     constructor (game){
         super(game)
         this.setup()
+        this.setupInput()
     }
     setup(){
-        var game = this.game        
+        var game = this.game 
+        //敌机数量  
+        this.numberOfEnemies = 3    
         this.bg = new GameImage(game,'sky')
-        this.cloud = new GameImage(game,'cloud')
-        this.cloud.x = 30
-        this.cloud.y = 30
-        this.player = new GameImage(game,'player')       
+        this.cloud = new Cloud(game)
+        this.player = new Plyer(game)       
         this.player.x = 100
         this.player.y = 500
   
         this.addElement(this.bg)
-        this.addElement(this.cloud)
-        this.addElement(this.player)
+        this.addElement(this.cloud)       
         
+        //加载敌机
+        this.addEnemies()
+        //玩家
+        this.addElement(this.player)
 
+    }
+    addEnemies(){
+        var es = []
+        for(var i=0;i<this.numberOfEnemies;i++){
+            var e = new Enemy(this.game)
+            es.push(e)
+            this.addElement(e)
+        }
+        this.addEnemies = es
+    }
+    setupInput(){
+        var g = this.game
+        var s = this
+        g.registerAction('a', function() {
+            s.player.moveLeft()
+        })
+        g.registerAction('d', function() {
+            s.player.moveRight()
+        })
+        g.registerAction('w', function() {
+            s.player.moveUp()
+        })
+        g.registerAction('s', function() {
+            s.player.moveDown()
+        })
+        g.registerAction('j', function() {
+            s.player.fire()
+        })
     }
     //不需要子类 draw 否则会覆盖父类的draw
     // draw(){
@@ -25,92 +151,8 @@ class Scene extends GameScene{
     //    this.game.drawImage(this.player)
     // }
     update (){
-        this.cloud.y+=1
+        //调用父类的update()
+        super.update()
     }
 
 }
-// var Scene = function(game){
-//     var s = {
-//         game:game,
-//     }
-//     //初始化
-//     var score = 0 
-//     var paddle = Paddle(game)
-//     var ball = Ball(game)
-//     var blocks = loadLevel(game,1)
-
-//     game.registerAction('a', function() {
-//         paddle.moveLeft()
-//     })
-//     game.registerAction('d', function() {
-//         paddle.moveRight()
-//     })
-//     game.registerAction('f', function() {
-//         ball.fire()
-//     })
-//     s.draw = function(){
-//         //draw
-//         game.context.fillStyle="#ccc"
-//         game.context.fillRect(0,0,400,300)
-//         //draw
-//         game.drawImage(paddle)
-//         game.drawImage(ball)
-//         for (var i = 0; i < blocks.length; i++) {
-//             var block = blocks[i]
-//             if (block.alive) {
-//                 game.drawImage(block)
-//             }
-//         }
-//         //渲染分数
-//         game.context.fillText('分数：'+ score,10,290)
-//     }
-//     s.update = function(){
-//         if (window.paused) {
-//             return
-//         }
-//         ball.move()
-//         //判断球跌入挡板下面
-//         if(ball.y> paddle.y){
-//             var end = new SceneEnd(game)
-//             game.replaceScene(end)
-//         }
-//         //判断相撞
-//         if (paddle.collide(ball)) {
-//         //反弹
-//             ball.speedY *= -1
-//         }
-//         //判断球和墙相撞
-//         for (var i = 1; i < blocks.length; i++) {
-//             var block = blocks[i]
-//             if (block.collide(ball)) {
-//                 block.kill()
-//                 ball.changgespeed()
-//                 //分数增加
-//                 score += 100
-//             }
-//         }
-//     }
-//     //mouse event
-//     var enableDrag = false
-//     game.canvas.addEventListener('mousedown',function(event){
-//         var x = event.offsetX
-//         var y = event.offsetY
-//         if(ball.hasPoint(x,y)){
-//             enableDrag = true
-//         }
-//     })
-//     game.canvas.addEventListener('mousemove',function(event){
-//         var x = event.offsetX
-//         var y = event.offsetY
-//         if(enableDrag){
-//             ball.x = x
-//             ball.y = y
-//         }
-//     })
-//     game.canvas.addEventListener('mouseup',function(event){
-//         var x = event.offsetX
-//         var y = event.offsetY
-//         enableDrag = false
-//     })
-//     return s
-// }

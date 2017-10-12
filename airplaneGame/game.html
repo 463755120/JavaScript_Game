@@ -31,6 +31,49 @@
         <div class="">
             <!-- <textarea id="id-text-log" rows="20" cols="50"></textarea> -->
         </div>
+        <div class="">
+            <label>
+                <input type="range" class="game-auto-slider"
+                    value="1"
+                    data-value="config.player_speed"
+                >
+                玩家速度：<span class="gameLabel"></span>
+            </label>
+        </div>
+        <div class="">
+                <label>
+                    <input type="range" class="game-auto-slider"
+                        value="1"
+                        data-value="config.bullet_speed"
+                    >
+                    子弹速度：<span class="gameLabel"></span>
+                </label>
+            </div>
         <script src=main.js></script>
+        <script>
+            var es = sel => document.querySelectorAll(sel)
+
+            var bindAll = function(sel,eventName,callback){
+                var l = es(sel)
+                for(var i=0;i<l.length;i++){
+                    var input = l[i]
+                    input.addEventListener(eventName,function(event){
+                        callback(event)
+                    })
+                }
+            }
+            bindAll(".game-auto-slider",'input',function(event){
+                
+                var target = event.target
+                //dataset这个属性用来读取自定义data-value的值
+                var bindVal = target.dataset.value 
+                //这个值是本身input的值
+                var valueNumber = target.value
+                eval(bindVal+'='+valueNumber)
+                
+                var label = target.closest('label').querySelector('.gameLabel')
+                label.innerText = valueNumber
+            })
+        </script>
     </body>
 </html>
