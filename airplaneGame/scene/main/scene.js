@@ -100,6 +100,8 @@ class Scene extends GameScene{
     }
     setup(){
         var game = this.game 
+        //持续时间
+        this.ruration = 50
         //敌机数量  
         this.numberOfEnemies = 3    
         this.bg = new GameImage(game,'sky')
@@ -115,6 +117,9 @@ class Scene extends GameScene{
         this.addEnemies()
         //玩家
         this.addElement(this.player)
+        //粒子爆炸
+        var ps = new GameparticalSystem(game)
+        this.addElement(ps)
 
     }
     addEnemies(){

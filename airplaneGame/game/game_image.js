@@ -8,7 +8,7 @@ class GameImage{
         this.h = this.texture.height
     }
     draw(){
-
+        this.game.drawImage(this)
     }
     update(){
 

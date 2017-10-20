@@ -37,10 +37,12 @@ var __main = function() {
         player: 'img/player_plane.png',
         sky:'img/sky_bg.jpg',
         enemy0:'img/enemy0.png',
-        enemy1:'img/enemy1.png'
+        enemy1:'img/enemy1.png',
+        fire:'img/fire.png',
     }       
     var game = new Game(30,images,function(g){      
         var scene =  new Scene(g)
+        //var scene =  new SceneTitle(g)
         g.runWithScene(scene)
         
     })
