@@ -1,8 +1,3 @@
-const config = {
-    player_speed:10,
-    cloud_speed:1,
-    bullet_speed:1,
-}
 class Bullet extends GameImage{
     constructor(game){
         super(game,'bullet')

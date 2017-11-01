@@ -51,33 +51,20 @@ class Gnameanimation {
   }
   draw() {
     var context = this.game.context
-    // this.game.drawImage(this);
-    // if(this.flipx){
-    //     context.save()
-    //     var x = this.x+this.w/2
-    //     context.translate(x,0)
-    //     context.scale(-1,1)
-    //     context.translate(-x,0)
-    //     context.drawImage(this.texture,this.x,this.y)
-    //     context.restore()
-    // } else{
-    //   context.drawImage(this.texture,this.x,this.y)
-    // }
     context.save()
     var w2 = this.w / 2
     var h2 = this.h / 2
     context.translate(this.x + w2,this.y + h2)
-    if(this.flipx){
+    if(this.flipX){
       context.scale(-1,1)
     }
-    log(this.rotation)
     context.rotate(this.rotation * Math.PI/180)
     context.translate(-w2,-h2)
     context.drawImage(this.texture,0,0)
     context.restore()
   }
   move(x, keystatus) {
-    this.flipx = x<0;
+    this.flipX = x<0;
     this.x += x;
     // var animationNames = {
     //   down: "run",

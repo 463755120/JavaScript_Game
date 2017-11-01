@@ -44,8 +44,8 @@ var __main = function() {
        bird1:'./bird/redbird-downflap.png',
        bird2:'./bird/redbird-midflap.png',
        bird3:'./bird/redbird-upflap.png',
-       tube1:'./bird/tube1.png',
-       tube2:'./bird/tube2.png',
+       pipe1:'./bird/tube1.png',
+       pipe2:'./bird/tube2.png',
        base:'./bird/base.png',
 
     }       
