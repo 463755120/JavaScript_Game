@@ -30,7 +30,6 @@ class Pipes {
     }
     draw() {
         for (var p of this.pipes) {
-            log(context)
             var context = this.game.context
             context.save()
             var w2 = p.w / 2
@@ -39,7 +38,6 @@ class Pipes {
             var scaleX = p.flipX ?-1:1
             var scaleY = p.flipY ?-1:1
             context.scale(scaleX, scaleY)
-            log(p.rotation)
             context.rotate(p.rotation * Math.PI / 180)
             context.translate(-w2, -h2)
             context.drawImage(p.texture, 0, 0)

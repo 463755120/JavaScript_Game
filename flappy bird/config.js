@@ -1,5 +1,7 @@
 const config = {
-    player_speed:10,
-    cloud_speed:1,
-    bullet_speed:1,
+    pipe_space:{
+        _comment:'两个管子之间的间距',
+        value:150
+    },
+    
 }
