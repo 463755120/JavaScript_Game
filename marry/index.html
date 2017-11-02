@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>底层提取马里奥</title>
+</head>
+
+<body>
+    <h3></h3>
+    <canvas id="id-canvas" width="600" height="600"></canvas>
+    <div class="game-controls">
+        <button data-action="change_offset" data-offset="-1024">-1024</button>
+        <button data-action="change_offset" data-offset="1024">+1024</button>
+        <button data-action="change_offset" data-offset="-16">-16</button>
+        <button data-action="change_offset" data-offset="16">+16</button>
+    </div>
+    <script>
+        let e = sel => document.querySelector(sel)
+        let log = console.log.bind(console)
+
+        const ajax = request => {
+            let r = new XMLHttpRequest()
+            r.open(request.method, request.url, true)
+            r.responseType = "arraybuffer"
+            r.onreadystatechange = event => {
+                if (r.readyState == 4) {
+                    request.callback(r.response)
+                }
+            }
+            r.send()
+        }
+       
+        const drawBlock = (context, data, x, y, pixelWidth) => {
+            const colors = [
+                'white',
+                '#FE1000',
+                '#FFB010',
+                '#AA3030',
+            ]
+            let w = pixelWidth
+            let h = pixelWidth
+            let bitlength = 8
+
+            for (let i = 0; i < bitlength; i++) {
+                let p1 = data[i]
+                let p2 = data[i+8]
+                for (let j = 0; j < bitlength; j++) {
+                    //8 bite per line
+                    //78 69      0100 1110 0100 0101
+                    //在j循环中，每一次画一个像素
+                   let c1 = (p1 >> (7-j)) & 0b00000001
+                   let c2 = (p2 >> (7-j)) & 0b00000001
+                   let pixel = (c2 << 1)+c1
+                   let color = colors[pixel]
+                   context.fillStyle = color
+                   let px = x+j*w
+                   let py = y+i*h
+                   context.fillRect(px,py,w,h)
+                }
+            }
+        }
+        const drawNes = bytes => {
+            //78 69
+            //0100 1110 0100 0101
+
+            let canvas = e("#id-canvas")
+            let context = canvas.getContext('2d')
+
+            let blockSize = 8 //一个图块8像素
+            let pixelSize = 8
+            let pixelWidth = 5
+            let numberOfBytesPerBlock = 16
+
+            for (let i = 0; i < blockSize; i++) {
+                for (let j = 0; j < blockSize; j++) {
+                    let x = j * pixelSize * pixelWidth
+                    let y = i * pixelSize * pixelWidth
+                    let index = window.offset+(i * 8 + j) * numberOfBytesPerBlock
+                    drawBlock(context, bytes.slice(index), x, y, pixelWidth)
+                }
+            }
+        }
+        const actions = {
+            change_offset(offset){
+                window.offset += offset
+                e('h3').innerHTML = window.offset
+                drawNes(window.bytes)
+            },
+        }
+        const bindEvents = ()=>{
+            e('.game-controls').addEventListener('click',event=>{
+                let action  = event.target.dataset.action
+                let offset  = Number(event.target.dataset.offset)
+                
+                actions[action] && actions[action](offset)
+            })
+        }
+        const _main = () => {
+            //初始的值
+            window.offset = 32784
+            let request = {
+                method: "GET",
+                url: "./game/marrao.nes",
+                callback(r) {
+                    log(r)
+                    window.bytes = new Uint8Array(r)
+                    log('bytes', bytes)
+                    drawNes(bytes)
+                },
+            }
+            ajax(request)
+            bindEvents()
+        }
+        _main()
+    </script>
+</body>
+
+</html>
