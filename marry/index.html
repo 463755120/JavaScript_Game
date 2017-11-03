@@ -11,6 +11,7 @@
 <body>
     <h3></h3>
     <canvas id="id-canvas" width="600" height="600"></canvas>
+    <canvas id="id-canvas-sprite" width="160" height="320"></canvas>
     <div class="game-controls">
         <button data-action="change_offset" data-offset="-1024">-1024</button>
         <button data-action="change_offset" data-offset="1024">+1024</button>
@@ -32,7 +33,7 @@
             }
             r.send()
         }
-       
+
         const drawBlock = (context, data, x, y, pixelWidth) => {
             const colors = [
                 'white',
@@ -46,19 +47,19 @@
 
             for (let i = 0; i < bitlength; i++) {
                 let p1 = data[i]
-                let p2 = data[i+8]
+                let p2 = data[i + 8]
                 for (let j = 0; j < bitlength; j++) {
                     //8 bite per line
                     //78 69      0100 1110 0100 0101
                     //在j循环中，每一次画一个像素
-                   let c1 = (p1 >> (7-j)) & 0b00000001
-                   let c2 = (p2 >> (7-j)) & 0b00000001
-                   let pixel = (c2 << 1)+c1
-                   let color = colors[pixel]
-                   context.fillStyle = color
-                   let px = x+j*w
-                   let py = y+i*h
-                   context.fillRect(px,py,w,h)
+                    let c1 = (p1 >> (7 - j)) & 0b00000001
+                    let c2 = (p2 >> (7 - j)) & 0b00000001
+                    let pixel = (c2 << 1) + c1
+                    let color = colors[pixel]
+                    context.fillStyle = color
+                    let px = x + j * w
+                    let py = y + i * h
+                    context.fillRect(px, py, w, h)
                 }
             }
         }
@@ -78,41 +79,79 @@
                 for (let j = 0; j < blockSize; j++) {
                     let x = j * pixelSize * pixelWidth
                     let y = i * pixelSize * pixelWidth
-                    let index = window.offset+(i * 8 + j) * numberOfBytesPerBlock
+                    let index = window.offset + (i * 8 + j) * numberOfBytesPerBlock
                     drawBlock(context, bytes.slice(index), x, y, pixelWidth)
                 }
             }
         }
         const actions = {
-            change_offset(offset){
+            change_offset(offset) {
                 window.offset += offset
                 e('h3').innerHTML = window.offset
                 drawNes(window.bytes)
             },
         }
-        const bindEvents = ()=>{
-            e('.game-controls').addEventListener('click',event=>{
-                let action  = event.target.dataset.action
-                let offset  = Number(event.target.dataset.offset)
-                
+        const bindEvents = () => {
+            e('.game-controls').addEventListener('click', event => {
+                let action = event.target.dataset.action
+                let offset = Number(event.target.dataset.offset)
+
                 actions[action] && actions[action](offset)
             })
+           window.addEventListener('keydown',event=>{
+               if(event.key == 'p'){
+                   window.paused =! window.paused
+               }
+           })
+        }
+        const drawSprite = data => {
+            let context = e("#id-canvas-sprite").getContext('2d')
+            let pixelWidth = 10
+            let pixelsPerBlock = 8
+            let blockSize = pixelWidth * pixelsPerBlock
+            let offset = 0
+            for (var i = 0; i < 4; i++) {
+                for (var j = 0; j < 2; j++) {
+                    let x = j * blockSize
+                    let y = i * blockSize
+                    let pixels = data.slice(offset)
+                    drawBlock(context, pixels, x, y, pixelWidth)
+                    offset += 16
+                }
+            }
         }
         const _main = () => {
             //初始的值
             window.offset = 32784
+            window.paused = false;
+            let titleoffset = 32784
             let request = {
                 method: "GET",
                 url: "./game/marrao.nes",
                 callback(r) {
-                    log(r)
                     window.bytes = new Uint8Array(r)
-                    log('bytes', bytes)
                     drawNes(bytes)
+                    let step = 0
+                    let bytesPerBlock = 16
+                    let tilesPerBlock = 8
+                    let bytesPerSprite = bytesPerBlock * tilesPerBlock
+                    setInterval(() => {
+                        let offset = titleoffset + bytesPerSprite * step
+                        drawSprite(bytes.slice(offset))
+                        if (window.paused) {
+
+                        } else {
+                            step++
+                            step %= 4
+                        }
+
+                    }, 200)
+
                 },
             }
             ajax(request)
             bindEvents()
+
         }
         _main()
     </script>
