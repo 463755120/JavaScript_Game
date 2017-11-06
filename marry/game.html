@@ -8,6 +8,10 @@
         canvas {
             border: 1px black solid;
         }
+
+        .game-inline-block {
+            display: inline-block
+        }
     </style>
     <!-- game 相关文件 -->
     <script src='game/utils.js'></script>
@@ -34,13 +38,21 @@
 </head>
 
 <body>
-    <canvas id="id-canvas" width="256" height="160"></canvas>
+    <canvas id="id-canvas" width="512" height="480"></canvas>
+    <div class="game-inline-block">
+        <img data-action="change_acive_title" src="./img/block.png" alt="" data-id="1">
+        <img data-action="change_acive_title" src="./img/floor.png" alt="" data-id="2">
+        <img data-action="change_acive_title" src="./img/gold.png" alt="" data-id="3">
+        <img data-action="change_acive_title" src="./img/test.png" alt="" data-id="4">
+    </div>
     <hr>
     <input id=id-input-speed type="range" value="1">
-    <div class="game-control" id="div1"></div>
+    <div class="game-control" id="div1">
+
+    </div>
     <script src=main.js></script>
     <script>
-        var es = sel => document.querySelectorAll(sel)
+        var es = sel => document.querySelector(sel)
 
         var bindAll = function (sel, eventName, callback) {
             var l = es(sel)
@@ -51,8 +63,8 @@
                 })
             }
         }
-        var templaControl = function (key,item) {
-            var t =
+        var templaControl = function (key, item) {
+         var t =
                 `<div class="">
                     <label>
                         <input type="range" class="game-auto-slider"
@@ -62,19 +74,26 @@
                         ${item._comment}<span class="gameLabel"></span>
                     </label>
                 </div>`
-                return t
+            return t
         }
         var insertControl = function () {
             var div = document.getElementById("div1")
             var keys = Object.keys(config)
             for (var k of keys) {
                 var item = config[k]
-                var html = templaControl(k,item)
-                div.insertAdjacentHTML("beforeend",html)
+                var html = templaControl(k, item)
+                div.insertAdjacentHTML("beforeend", html)
             }
         }
+        const actions = {
+            change_acive_title(event) {
+                    let id = Number(event.target.dataset.id)
+                   log(id)
+                },
 
-        var bindEvents =function(){
+            }
+
+        var bindEvents = function () {
             bindAll(".game-auto-slider", 'input', function (event) {
 
                 var target = event.target
@@ -87,14 +106,18 @@
                 var label = target.closest('label').querySelector('.gameLabel')
                 label.innerText = valueNumber
             })
-        } 
+            //     
+                es('body').addEventListener('click', event => {
+                    let action = event.target.dataset.action
+                    actions[action] && actions[action](event)
+                })
+        }
         var _main = function () {
             insertControl()
-           bindEvents()
+            bindEvents()
         }
         _main()
     </script>
 </body>
 
 </html>
-

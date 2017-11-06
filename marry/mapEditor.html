@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>底层提取马里奥</title>
+    <style>
+    canvas{
+        border: 1px solid #ccc
+    }
+    </style>
+</head>
+
+<body>
+    <h3></h3>
+    <canvas id="id-canvas" width="512" height="480" data-action="draw_title" data-type="source"></canvas>
+    <div class="game-inline-block">
+        <img data-action="change_acive_title" src="./img/block.png" alt="" data-id="1">
+        <img data-action="change_acive_title" src="./img/floor.png" alt="" data-id="2">
+        <img data-action="change_acive_title" src="./img/gold.png" alt="" data-id="3">
+        <img data-action="change_acive_title" src="./img/test.png" alt="" data-id="4">
+    </div>
+    <div class="game-controls">
+        <button data-action="change_offset" data-offset="-1024">-1024</button>
+        <button data-action="change_offset" data-offset="1024">+1024</button>
+        <button data-action="change_offset" data-offset="-16">-16</button>
+        <button data-action="change_offset" data-offset="16">+16</button>
+        <button data-action="clear_title" data-selector="#id-canvas-sprite">清空画布</button>
+    </div>
+    
+    <script>
+        let e = sel => document.querySelector(sel)
+        let log = console.log.bind(console)
+
+        const actions = {
+            change_offset(event) {
+                log(event.target.dataset.offset)
+                let offset = Number(event.target.dataset.offset)
+                window.offset += offset
+                e('h3').innerHTML = window.offset
+                drawNes(window.bytes)
+            }
+        }
+        const bindEvents = () => {
+            e('body').addEventListener('click', event => {
+                let action = event.target.dataset.action
+                actions[action] && actions[action](event)
+            })
+        }
+        const drawSprite = (data,canvans,offsetX,offsetY,w,h) => {
+            log(canvans)
+            let context = canvans.getContext('2d')
+            let pixelWidth = 10
+            let pixelsPerBlock = 8
+            let blockSize = pixelWidth * pixelsPerBlock
+            let offset = 0
+            for (var i = 0; i < h; i++) {
+                for (var j = 0; j < w; j++) {
+                    let x = (offsetX+j) * blockSize
+                    let y = (offsetY+i) * blockSize
+                    let pixels = data.slice(offset)
+                    drawBlock(context, pixels, x, y, pixelWidth)
+                    offset += 16
+                }
+            }
+        }
+        const _main = () => {
+            //初始的值
+           
+            bindEvents()
+
+        }
+        _main()
+    </script>
+</body>
+
+</html>

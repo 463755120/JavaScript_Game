@@ -35,8 +35,6 @@ class GameMap {
 class SceneEditor extends GameScene {
     constructor(game) {
         super(game)
-        var bg = new GameImage(game, 'bg')
-        this.addElement(bg)
         //title map
         let map = new GameMap(game)
         this.addElement(map)

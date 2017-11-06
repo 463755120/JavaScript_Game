@@ -16,7 +16,7 @@ class GameNesSprite {
       this.frameIndex  = 0
       this.stop = false;
       //重力和加速度
-      this.gy = 5
+      this.gy = 10
       this.vy = 2
       this.vx = 0
       this.mx = 0
