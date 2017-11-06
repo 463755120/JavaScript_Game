@@ -15,7 +15,7 @@
 
 <body>
     <h3></h3>
-    <canvas id="id-canvas" width="512" height="480" data-action="draw_title" data-type="source"></canvas>
+    <canvas id="id-canvas" width="512" height="480" data-action="draw_title"></canvas>
     <div class="game-inline-block">
         <img data-action="change_acive_title" src="./img/block.png" alt="" data-id="1">
         <img data-action="change_acive_title" src="./img/floor.png" alt="" data-id="2">
@@ -31,20 +31,26 @@
     </div>
     
     <script>
-        let e = sel => document.querySelector(sel)
+        let es = sel => document.querySelector(sel)
         let log = console.log.bind(console)
 
         const actions = {
-            change_offset(event) {
-                log(event.target.dataset.offset)
-                let offset = Number(event.target.dataset.offset)
-                window.offset += offset
-                e('h3').innerHTML = window.offset
-                drawNes(window.bytes)
+            change_acive_title(event) {
+                let id = Number(event.target.dataset.id)
+               log(id)
+               window.activeTile = event.target
+            },
+            draw_title(event){
+                let target = event.target
+                let rest = target.getBoundingClientRect()
+                let x = event.clientX - rest.left
+                let y = event.clientY - rest.top
+                let i = parseInt(x/80)         
+                let j = parseInt(y/80)
             }
         }
         const bindEvents = () => {
-            e('body').addEventListener('click', event => {
+            es('body').addEventListener('click', event => {
                 let action = event.target.dataset.action
                 actions[action] && actions[action](event)
             })
@@ -66,9 +72,12 @@
                 }
             }
         }
+        const init = ()=>{
+            window.activeTile = null
+        }
         const _main = () => {
             //初始的值
-           
+            init()
             bindEvents()
 
         }
