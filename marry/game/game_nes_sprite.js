@@ -18,6 +18,8 @@ class GameNesSprite {
       //重力和加速度
       this.gy = 5
       this.vy = 2
+      this.vx = 0
+      this.mx = 0
       //上升和掉落角度
       this.rotation = 0;
     }
@@ -77,9 +79,18 @@ class GameNesSprite {
       //this.rotation = -45
     }
     update() {
+      //更新x轴的加速度，摩擦力
+      this.vx +=this.mx
+      //摩擦力已经把速度降至0，停止摩擦
+      if(this.vx *this.mx>0){
+        this.vx = 0
+        this.mx = 0
+      } else {
+        this.x +=this.vx
+      }
       this.y += this.vy
       this.vy+=this.gy*0.3
-      var h = 278;
+      var h = 100;
       if(this.y >= h){
         this.y = h
       } else if(this.y<=0){
@@ -109,8 +120,12 @@ class GameNesSprite {
       context.restore()
     }
     move(x, keystatus) {
-      this.flipX = x<0;
-      this.x += x;
+      this.flipX = (x<0);
+      let s = 2*x
+      if(keystatus=="down"){
+        this.vx +=s
+        this.mx = -s/3
+      }
     }
     moveStop() {
       this.stop = true;

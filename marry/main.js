@@ -40,6 +40,11 @@ var __main = function() {
        pipe1:'./bird/tube1.png',
        pipe2:'./bird/tube2.png',
        base:'./bird/base.png',
+       //马里奥
+       m1:'./img/block.png',
+       m2:'./img/test.png',
+       m3:'./img/floor.png',
+       m4:'./img/gold.png',
 
     } 
     const ajax = request => {
@@ -60,7 +65,8 @@ var __main = function() {
             window.bytes = new Uint8Array(r)
             var game = new Game(30,images,function(g){      
                 //var scene =  new Scene(g)
-                var scene =  new SceneTitle(g)
+                //var scene =  new SceneTitle(g)
+                var scene =  new SceneEditor(g)
                 g.runWithScene(scene)
                 enableDebugMode(game,true)
                 
