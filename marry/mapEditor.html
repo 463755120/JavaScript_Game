@@ -7,9 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>底层提取马里奥</title>
     <style>
-    canvas{
-        border: 1px solid #ccc
-    }
+        canvas {
+            border: 1px solid #ccc
+        }
     </style>
 </head>
 
@@ -29,7 +29,7 @@
         <button data-action="change_offset" data-offset="16">+16</button>
         <button data-action="clear_title" data-selector="#id-canvas-sprite">清空画布</button>
     </div>
-    
+
     <script>
         let es = sel => document.querySelector(sel)
         let log = console.log.bind(console)
@@ -37,25 +37,67 @@
         const actions = {
             change_acive_title(event) {
                 let id = Number(event.target.dataset.id)
-               log(id)
-               window.activeTile = event.target
+                window.activeTile = event.target
             },
-            draw_title(event){
+            draw_title(event) {
                 let target = event.target
                 let rest = target.getBoundingClientRect()
-                let x = event.clientX - rest.left
-                let y = event.clientY - rest.top
-                let i = parseInt(x/80)         
-                let j = parseInt(y/80)
+                let x = event.clientX 
+                let y = event.clientY
+                let titleSize = 32
+                let i = parseInt(x / titleSize)
+                let j = parseInt(y / titleSize)
+                let x1 = i * titleSize
+                let y1 = j * titleSize
+                window.context.fillRect(x1, y1, titleSize, titleSize)
+                window.context.drawImage(window.activeTile, x1, y1)
             }
+        }
+        const titlePosition = (x, y) => {
+            let titleSize = 32
+            let i = parseInt(x / titleSize)
+            let j = parseInt(y / titleSize)
+            let x1 = i * titleSize
+            let y1 = j * titleSize
+            return [x1,y1]
+        }
+        const drawTileAt = (x, y) => {
+            let titleSize = 32
+            let [x1, y1] = titlePosition(x, y)
+            window.context.fillRect(x1, y1, titleSize, titleSize)
+            window.context.drawImage(window.activeTile, x1, y1)
+            //FIXME
+            let tile = Number(window.activeTile.dataset.id)
+            let mx = x1/titleSize
+            let my = y1/titleSize
+            window.map.setTile(mx,my,tile)
         }
         const bindEvents = () => {
             es('body').addEventListener('click', event => {
                 let action = event.target.dataset.action
                 actions[action] && actions[action](event)
             })
+            //拖动
+            let moving = false
+            window.canvans.addEventListener('mousedown', event => {
+                moving = true
+                let x = event.clientX 
+                let y = event.clientY
+                drawTileAt(x, y)
+            })
+            window.canvans.addEventListener('mousemove', event => {
+                if (moving) {
+                    let x = event.clientX 
+                    let y = event.clientY
+                    drawTileAt(x, y)
+                }
+            })
+            //
+            window.canvans.addEventListener('mouseup', event => {
+                moving = false
+            })
         }
-        const drawSprite = (data,canvans,offsetX,offsetY,w,h) => {
+        const drawSprite = (data, canvans, offsetX, offsetY, w, h) => {
             log(canvans)
             let context = canvans.getContext('2d')
             let pixelWidth = 10
@@ -64,16 +106,44 @@
             let offset = 0
             for (var i = 0; i < h; i++) {
                 for (var j = 0; j < w; j++) {
-                    let x = (offsetX+j) * blockSize
-                    let y = (offsetY+i) * blockSize
+                    let x = (offsetX + j) * blockSize
+                    let y = (offsetY + i) * blockSize
                     let pixels = data.slice(offset)
                     drawBlock(context, pixels, x, y, pixelWidth)
                     offset += 16
                 }
             }
         }
-        const init = ()=>{
+        const init = () => {
+            window.map = new Map()
             window.activeTile = null
+            window.canvans = es('#id-canvas')
+            window.context = window.canvans.getContext('2d')
+            window.context.fillStyle = "#5080ff"
+            window.context.fillRect(0, 0, 1000, 1000)
+        }
+        class Map{
+            constructor (){
+                this.height = 15
+                this.width = 20
+                this.tiles  = []
+                this.setupTiles()
+            }
+            setupTiles(){
+                let s = this.height *this.width
+                for(let i=0;i<s;i++){
+                    this.tiles[i] =0
+                }
+            }
+            setTile(i,j,tile){
+                let index = i*this.height+j
+                log(i,j,tile)
+                this.tiles[index] = tile
+            }
+            exportJSON(){
+                let s = JSON.stringify(this.tiles)
+                log(s)
+            }
         }
         const _main = () => {
             //初始的值
