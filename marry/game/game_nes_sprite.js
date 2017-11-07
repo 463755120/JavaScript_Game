@@ -1,6 +1,8 @@
 class GameNesSprite {
-    constructor(game) {
+    constructor(game,map) {
       this.game = game;
+      this.map = map;
+      this.titleSize = map.titleSize
       this.animation = {
         bird: [],
       };
@@ -22,6 +24,7 @@ class GameNesSprite {
       this.mx = 0
       //上升和掉落角度
       this.rotation = 0;
+      this.maxSpeed = 8
     }
      drawBlock (context, data, x, y, pixelWidth) {
         const colors = [
@@ -78,9 +81,35 @@ class GameNesSprite {
       this.vy -=10
       //this.rotation = -45
     }
+    updataGravity(){
+      //拿到角色在地图中的坐标ij
+      let i = Math.floor(this.x/this.titleSize)
+      let j = Math.floor(this.y/this.titleSize)+2
+      let onThGround = this.map.onThGround(i,j)
+      if(onThGround && this.vy>0){
+        this.vy = 0
+      }else{
+        this.y += this.vy
+        this.vy+=this.gy*0.3
+        //陷入地面拔出来
+        let j = Math.floor(this.y/this.titleSize)+2
+        let onThGround = this.map.onThGround(i,j)
+        if(onThGround){
+          this.y = (j-2)*this.titleSize
+        }
+         if(this.y>=450){
+          this.y =450;
+        }
+      }
+      
+    }
     update() {
       //更新x轴的加速度，摩擦力
       this.vx +=this.mx
+      //限制最大速度
+      if(Math.abs(this.vx) >= this.maxSpeed){
+        this.vx = parseInt(this.vx)
+      }
       //摩擦力已经把速度降至0，停止摩擦
       if(this.vx *this.mx>0){
         this.vx = 0
@@ -88,14 +117,7 @@ class GameNesSprite {
       } else {
         this.x +=this.vx
       }
-      this.y += this.vy
-      this.vy+=this.gy*0.3
-      var h = 100;
-      if(this.y >= h){
-        this.y = h
-      } else if(this.y<=0){
-        this.y =0;
-      }
+      this.updataGravity()
     this.frameCount--;
     if (this.frameCount == 0) {
       this.frameCount = 3;
