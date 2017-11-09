@@ -17,6 +17,11 @@ class GameImage{
         return xIn && yIn
         
     }
+    center(){
+        let x = this.x +this.w/2
+        let y = this.y + this.h / 2
+        return new Vector(x,y)
+    }
     clone(){
         let c = new GameImage(this.game,this.name)
         c.x = this.x
