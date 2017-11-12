@@ -17,18 +17,17 @@ class SceneTitle extends GameScene {
   setupTower(){
     let tower1 = new Tower(this.game);
     tower1.x = 100;
-    tower1.y = 150;
+    tower1.y = 170;
     this.addElement(tower1)
     this.towers.push(tower1);
   }
   setupGameElements() {
-    let e1 = new Enemy1(this.game);
-    this.addElement(e1);
-    let e2 = new Enemy1(this.game);
-    e2.x -= 30;
-    this.addElement(e2);
-    this.enemies.push(e1)
-    this.enemies.push(e2);
+    for(let i =0;i<10;i++){
+      let e2 = new Enemy1(this.game);
+      e2.x -= i*30;
+      this.addElement(e2);
+      this.enemies.push(e2)
+    }
   }
   setupBG() {
     var bg = new GameImage(this.game, "bg");

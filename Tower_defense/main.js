@@ -35,6 +35,8 @@ var __main = function() {
        m2:'./img/test.png',
        m3:'./img/floor.png',
        m4:'./img/gold.png',
+       //炮台
+       tower:'./img/tower.png'
 
     }    
     var game = new Game(30, images, function (g) {

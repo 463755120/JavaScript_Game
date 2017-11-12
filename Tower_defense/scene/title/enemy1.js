@@ -8,8 +8,23 @@ class Enemy1 extends GameImage {
     this.dead = false;
     this.y = 100;
     this.speed = 3;
-    this.hp = 3;
+    this.maxhp = 6
+    this.hp = 6;
     this.destination = 300;
+  }
+  drawLifebar(){
+    let context = this.game.context
+    context.fillStyle = 'red'
+    let [x,y,w,h] = [this.x,this.y-10,this.w,10]
+    context.fillRect(x,y,w,h)
+    context.fillStyle = 'green'
+    let w1 = w*(this.hp/this.maxhp)
+    context.fillRect(x,y,w1,h)
+
+  }
+  draw(){
+    super.draw()
+    this.drawLifebar()
   }
   update() {
     if (this.dead) {
