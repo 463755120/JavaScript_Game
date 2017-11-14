@@ -20,17 +20,23 @@ class Tower extends GameImage {
     context.fill()
   }
   draw(){  
-    this.drawAttackRange()
+   // this.drawAttackRange()
     super.draw()
   }
   update() {
     let target = this.target
     this.updateRotion(target)
-    if (this.canAttack(this.target)) {
+    if (this.canAttack(target)) {
+      this.fire(target)
+    }
+  }
+  fire(target){
+    if(this._firstCount !=0){
+      this._firstCount --
+      return false
+    }else{
+      this._firstCount = this._cooldown
       this.target.byAtack(this.attact);
-      if(this.target.dead){
-        this.target = null
-      }
     }
   }
   updateRotion(target){
@@ -43,22 +49,21 @@ class Tower extends GameImage {
   canAttack(enemy){
     
     let e = enemy;
-    let enemyExist = e !==null && !e.dead
-    if (enemyExist){
-      let can = this.center().distance(e.center()) < this.range;
-      if(this._firstCount !=0){
-        this._firstCount --
-        return false
-      }else{
-        this._firstCount = this._cooldown
-        return can
-      }
-      
-    } else{
-      return false
+    //检查是否存在，不要反写逻辑
+    if(e == null){
+      return 
     }
+    //检查敌人死亡，如果是，取消目标。
+    let enemyExist = e !==null && !e.dead
+    let inRange = this.center().distance(e.center()) < this.range;
+    let can = enemyExist && inRange
+    if (!can){
+      this.target = null
+    } 
+    return can
   };
   findTarget(enemies) {
+    
     for (let e of enemies) {
       if (this.canAttack(e)) {
         this.target = e
