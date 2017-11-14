@@ -30,7 +30,7 @@ class SceneTitle extends GameScene {
   }
   setupGameElements() {
     let offset = [0,30]
-    for(let i =0;i<100;i++){
+    for(let i =0;i<10;i++){
       let e2 = new Enemy1(this.game);
       e2.x -= i*30;
       e2.y += offset[i%2]

@@ -5,34 +5,50 @@ class Enemy1 extends GameImage {
     this.setup();
   }
   setup() {
+    this.setIndex = 0;
+    this.steps = [[0, 170], [0, 0], [300, 0], [300, 170], [600, 170]];
     this.dead = false;
-    this.y = 100;
-    this.speed = 3;
-    this.maxhp = 6
-    this.hp = 6;
+    this.x = 0
+    this.y = 170;
+    this.speed = 2;
+    this.maxhp = 100;
+    this.hp = 100;
     this.destination = 300;
   }
-  drawLifebar(){
-    let context = this.game.context
-    context.fillStyle = 'red'
-    let [x,y,w,h] = [this.x,this.y-10,this.w,10]
-    context.fillRect(x,y,w,h)
-    context.fillStyle = 'green'
-    let w1 = w*(this.hp/this.maxhp)
-    context.fillRect(x,y,w1,h)
-
+  drawLifebar() {
+    let context = this.game.context;
+    context.fillStyle = "red";
+    let [x, y, w, h] = [this.x, this.y - 10, this.w, 10];
+    context.fillRect(x, y, w, h);
+    context.fillStyle = "green";
+    let w1 = w * (this.hp / this.maxhp);
+    context.fillRect(x, y, w1, h);
   }
-  draw(){
-    super.draw()
-    this.drawLifebar()
+  draw() {
+    super.draw();
+    this.drawLifebar();
   }
   update() {
     if (this.dead) {
-      log("我死了");
       return;
     }
-    this.x += this.speed;
-    if (this.x > this.destination) {
+    let [dx, dy] = this.steps[this.setIndex];
+    let signX = dx > this.x ? 1 : -1;
+    let signY = dy > this.y ? 1 : -1;
+    if(dx == this.x){
+      signX =0
+    }
+    if(dy == this.y){
+      signY =0
+    }
+    this.x += this.speed*signX
+    this.y += this.speed *signY
+    if (this.x == dx && this.y == dy) {
+      this.setIndex++;
+      if (this.setIndex == this.steps.length) {
+        log("敌人走到终点");
+        this.die();
+      }
     }
   }
   byAtack(ad) {
