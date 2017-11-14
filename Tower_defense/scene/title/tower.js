@@ -6,7 +6,7 @@ class Tower extends GameImage {
   }
   setup() {
     this.attact = 1;
-    this.range = 60;
+    this.range = 70;
     this.target = null;
     this._cooldown = 1
     this._firstCount = 0

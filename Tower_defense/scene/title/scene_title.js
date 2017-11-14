@@ -14,12 +14,16 @@ class SceneTitle extends GameScene {
     this.setupTower();
     this.setupInputs();
   }
-  setupTower(){
+  addTowe(x,y){
     let tower1 = new Tower(this.game);
-    tower1.x = 100;
-    tower1.y = 170;
+    tower1.x = x;
+    tower1.y = y;
     this.addElement(tower1)
     this.towers.push(tower1);
+  }
+  setupTower(){
+    this.addTowe(100,170)
+    this.addTowe(100,30)
   }
   setupGameElements() {
     for(let i =0;i<10;i++){
