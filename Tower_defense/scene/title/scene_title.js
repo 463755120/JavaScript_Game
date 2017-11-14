@@ -14,7 +14,10 @@ class SceneTitle extends GameScene {
     this.setupTower();
     this.setupInputs();
   }
-  addTowe(x,y){
+
+  addTower(x,y){
+    x = Math.floor(x/100)*100
+    y = Math.floor(y/100)*100
     let tower1 = new Tower(this.game);
     tower1.x = x;
     tower1.y = y;
@@ -22,13 +25,15 @@ class SceneTitle extends GameScene {
     this.towers.push(tower1);
   }
   setupTower(){
-    this.addTowe(100,170)
-    this.addTowe(100,30)
+    this.addTower(100,170)
+    this.addTower(100,30)
   }
   setupGameElements() {
-    for(let i =0;i<10;i++){
+    let offset = [0,30]
+    for(let i =0;i<100;i++){
       let e2 = new Enemy1(this.game);
       e2.x -= i*30;
+      e2.y += offset[i%2]
       this.addElement(e2);
       this.enemies.push(e2)
     }
@@ -38,7 +43,7 @@ class SceneTitle extends GameScene {
     this.addElement(bg);
   }
   setupHUD() {
-    let gun = new GameImage(this.game, "m1");
+    let gun = new GameImage(this.game, "tower");
     gun.x = 280;
     gun.y = 180;
     this.gun = gun;
@@ -60,25 +65,29 @@ class SceneTitle extends GameScene {
     //mouse event
     let self = this;
     let startDrag = false;
+    let ox = 0
+    let oy = 0
     this.game.registerMouse((event, status) => {
       let x = event.offsetX;
       let y = event.offsetY;
       if (status == "down") {
-        let cliicked = this.gun.pointInframe(x, y);
+        let cliicked = self.gun.pointInframe(x, y);
         if (cliicked) {
           startDrag = true;
           self.tower = self.gun.clone();
           self.addElement(self.tower);
+          //修正偏移
+          ox = self.gun.x-x
+          oy = self.gun.y-y
         }
-      } else if (status == "move") {
-        self.gun.x = x;
-        self.gun.y = y;
+      } else if (status == "move") {             
+          self.tower.x = x+ox
+          self.tower.y = y+oy
       } else {
         startDrag = false;
         self.removeElement(self.tower);
+        self.addTower(x,y)
       }
     });
-    var b = this.mario;
-    let playerSpeed = 5;
   }
 }
