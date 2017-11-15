@@ -1,6 +1,6 @@
 class Tower extends GameImage {
   constructor(game, name) {
-    name = name || "tower";
+    name = name || "tower2";
     super(game, name);
     this.setup();
   }

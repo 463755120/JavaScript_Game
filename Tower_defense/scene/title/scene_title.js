@@ -16,8 +16,10 @@ class SceneTitle extends GameScene {
   }
 
   addTower(x,y){
-    x = Math.floor(x/100)*100
-    y = Math.floor(y/100)*100
+    let t1 = new Tower(this.game)
+    let towerSize = t1.w
+    x = Math.floor(x/towerSize)*towerSize
+    y = Math.floor(y/towerSize)*towerSize
     let tower1 = new Tower(this.game);
     tower1.x = x;
     tower1.y = y;
