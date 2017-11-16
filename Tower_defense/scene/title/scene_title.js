@@ -4,7 +4,9 @@ class SceneTitle extends GameScene {
     this.setup();
   }
   setup(game) {
+    this.debugPath = []
     //初始敌人列表和塔列表
+    this.map = new TDMap(this.game,6,4)
     this.enemies = []
     this.towers = []
     this.setupBG();
@@ -25,6 +27,35 @@ class SceneTitle extends GameScene {
     tower1.y = y;
     this.addElement(tower1)
     this.towers.push(tower1);
+    this.findPathForEnemies()
+    
+  }
+  findPathForEnemies(){
+     //调用pathfinding 为每一个敌人寻路
+     let s = this.map.tileSize
+     for(let e of this.enemies){
+      let x = e.x;
+      let y = e.y;
+      let i = Math.floor(x/s)
+      let j = Math.floor(y/s)
+      let path = this.map.pathfinding(i,j)
+      e.resetPath(path)
+      //用debug 
+      this.debugPath = path
+     }
+  }
+  draw(){
+    super.draw()
+    log(this.debugPath)
+    let s = this.map.tileSize
+    log(this.debugPath)
+    for(let p of this.debugPath){
+      let context = this.game.context
+      context.fillStyle = 'rgba(200,200,200,0.5)'
+      let x = p.x*s
+      let y = p.y*s
+     context.fillRect(x,y,s,s)
+    }
   }
   setupTower(){
     this.addTower(100,170)
@@ -32,9 +63,10 @@ class SceneTitle extends GameScene {
   }
   setupGameElements() {
     let offset = [0,30]
-    for(let i =0;i<10;i++){
+    for(let i =0;i<1;i++){
       let e2 = new Enemy1(this.game);
-      e2.x -= i*30;
+      e2.tileSize = this.map.tileSize
+      e2.x -= i*30
       e2.y += offset[i%2]
       this.addElement(e2);
       this.enemies.push(e2)
@@ -50,9 +82,6 @@ class SceneTitle extends GameScene {
     gun.y = 180;
     this.gun = gun;
     this.addElement(gun);
-  }
-  draw() {
-    super.draw();
   }
   update() {
     super.update();

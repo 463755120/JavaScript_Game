@@ -2,11 +2,22 @@ class Enemy1 extends GameImage {
   constructor(game, name) {
     name = name || "m2";
     super(game, name);
+    this.tileSize = 0
     this.setup();
+  }
+  resetPath(path){
+   let steps = []
+   let s = this.tileSize
+   for(let p of path){
+     let c = [p.x*s,p.y*s]
+    steps.push(c)
+   }
+   this.steps = steps
+   this.setIndex = 0
   }
   setup() {
     this.setIndex = 0;
-    this.steps = [[0, 170], [0, 0], [300, 0], [300, 170], [600, 170]];
+    this.steps = [];
     this.dead = false;
     this.x = 0
     this.y = 170;
