@@ -47,6 +47,7 @@ class Gnameanimation {
       this.frameCount = 5;
       this.frameIndex = (this.frameIndex + 1) % this.frames().length;
       this.texture = this.frames()[this.frameIndex];
+
     }
   }
   draw() {
