@@ -1,11 +1,19 @@
 class Zombie extends Gnameanimation {
   static new(game) {
-    let animation = {
-      numberOfFrames:4,
-      name:"bhzombie",
-      pathFormat:'./img/bhzombie{}.png'
-    }
-    return new this(game,animation)
+    let animationZombie = {
+      name: "bhzombie",
+      pathFormat: "./img/[name]/[name]_[index].png",
+      actions: [{
+          name: "walking",
+          numberOfFrames: 17
+        },
+        {
+          name: "attack",
+          numberOfFrames: 10
+        }
+      ]
+    };
+    return new this(game,animationZombie)
   }
   setup() {}
 }

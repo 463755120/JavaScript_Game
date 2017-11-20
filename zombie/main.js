@@ -1,9 +1,9 @@
-var enableDebugMode = function(game, enable) {
+var enableDebugMode = function (game, enable) {
   if (!enable) {
     return;
   }
   window.paused = false;
-  window.addEventListener("keydown", function(event) {
+  window.addEventListener("keydown", function (event) {
     var k = event.key;
     if (k == "p") {
       // 暂停功能
@@ -16,42 +16,48 @@ var enableDebugMode = function(game, enable) {
   //控制速度
   document
     .querySelector("#id-input-speed")
-    .addEventListener("input", function() {
+    .addEventListener("input", function () {
       var input = event.target;
       fps = Number(input.value);
     });
 };
 var GameAddAnimation = (images, animation) => {
   let a = animation;
-  for (let i = 0; i < a.numberOfFrames; i++) {
-    var index = String(i);
-    if (i < 10) {
-      index = "0" + index;
+  let pathFormat = a.pathFormat
+  let keyName = a.name
+  for (let action of a.actions) {
+    let name = action.name
+    let numberOfFrames = action.numberOfFrames
+    let p = pathFormat.replace('[name]', name).replace('[name]', name)
+    for (let i = 0; i < action.numberOfFrames; i++) {
+      let index = '0'.repeat(String(action.numberOfFrames).length - String(i).length) + String(i)
+      let key = keyName + name + index;
+      let value = p.replace('[index]', index)
+      images[key] = value;
+
     }
-    let key = a.name + index;
-    let value = a.pathFormat.replace("{}", index);
-    images[key] = value;
+
   }
 };
-var __main = function() {
+var __main = function () {
   let animationZombie = {
     name: "bhzombie",
-    pathFormat: "./img/bhzombie{}.png",
-    actions: [
+    pathFormat: "./img/[name]/[name]_[index].png",
+    actions: [{
+        name: "walking",
+        numberOfFrames: 17
+      },
       {
-        action: "walking",
-        numberOfFrames: 4
-      },{
-        action: "attack",
-        numberOfFrames: 4
+        name: "attack",
+        numberOfFrames: 10
       }
     ]
   };
   var images = {
-    bhzombie00: "/img/bhzombie.png"
+    walking00: "./img/walking/walking_00.png"
   };
   GameAddAnimation(images, animationZombie);
-  var game = new Game(30, images, function(g) {
+  var game = new Game(30, images, function (g) {
     //var scene =  new Scene(g)
     var scene = new SceneTitle(g);
     g.runWithScene(scene);

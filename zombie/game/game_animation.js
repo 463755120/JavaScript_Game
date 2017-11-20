@@ -2,29 +2,27 @@ class Gnameanimation {
   constructor(game,animation) {
     this.game = game;
     let a = animation
-    this.animation = {
-      bird: [],
-    };
-    let prefix = a.name
-    for (var i = 0; i <a.numberOfFrames; i++) {
-      var index = '0'.repeat(String(a.numberOfFrames).length-String(i).length)+String(i)
-    index='0'+index
-    log(index)
-      var name = `${prefix}${index}`
-      var t = game.textureByName(name)
-      this.animation['bird'].push(t)
-    }
-    this.animationName = "bird";
+    this.animations = {};
+    for(let action of a.actions){
+      this.animations[action.name] = []
+      for (var i = 0; i <action.numberOfFrames; i++) {
+        var index = '0'.repeat(String(action.numberOfFrames).length-String(i).length)+String(i)
+        var key = a.name+action.name+index
+        var t = game.textureByName(key)
+        this.animations[action.name].push(t)
+      }
+    }    
+    this.animationName = a.actions[0].name
     this.texture = this.frames()[0];
     this.w = this.texture.width 
     this.h = this.texture.height
     this.frameIndex = 0;
-    this.frameCount = a.numberOfFrames;
+    this.frameCount = this.frames().length;
     this.stop = false;
     
   }
   frames() {
-    return this.animation[this.animationName];
+    return this.animations[this.animationName];
   }
   updateFrame(){
     this.frameCount--;
@@ -53,7 +51,7 @@ class Gnameanimation {
     context.restore()
   }
   
-  changeAnimation(animation) {
-    this.animationName = animation;
+  changeAnimation(name) {
+    this.animationName = name;
   }
 }
