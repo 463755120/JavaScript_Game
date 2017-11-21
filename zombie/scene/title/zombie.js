@@ -5,7 +5,7 @@ class Zombie extends Gnameanimation {
       pathFormat: "./img/[name]/[name]_[index].png",
       actions: [{
           name: "walking",
-          numberOfFrames: 17
+          numberOfFrames: 21
         },
         {
           name: "attack",

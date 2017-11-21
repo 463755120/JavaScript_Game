@@ -40,12 +40,23 @@ var GameAddAnimation = (images, animation) => {
   }
 };
 var __main = function () {
+  //plant
+  let animationPeashooter = {
+    name: "Peashooter",
+    pathFormat: "./img/[name]/Peashooter_[name]_[index].png",
+    actions: [{
+        name: "idle",
+        numberOfFrames: 12
+      },
+    ]
+  };
+  //zombie
   let animationZombie = {
     name: "bhzombie",
     pathFormat: "./img/[name]/[name]_[index].png",
     actions: [{
         name: "walking",
-        numberOfFrames: 17
+        numberOfFrames: 21
       },
       {
         name: "attack",
@@ -54,9 +65,10 @@ var __main = function () {
     ]
   };
   var images = {
-    walking00: "./img/walking/walking_00.png"
+    bg1:'img/background1.jpg'
   };
   GameAddAnimation(images, animationZombie);
+  GameAddAnimation(images, animationPeashooter);
   var game = new Game(30, images, function (g) {
     //var scene =  new Scene(g)
     var scene = new SceneTitle(g);
