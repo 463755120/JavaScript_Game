@@ -65,7 +65,8 @@ var __main = function () {
     ]
   };
   var images = {
-    bg1:'img/background1.jpg'
+    bg1:'img/background1.jpg',
+    peabullet1:'img/PB00.gif',
   };
   GameAddAnimation(images, animationZombie);
   GameAddAnimation(images, animationPeashooter);

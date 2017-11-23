@@ -14,17 +14,23 @@ class SceneTitle extends GameScene {
     this.addElement(bg)
   }
   setupPeashooter() {
-    let peashooter = Peashooter.new(this.game);
-    window.z = peashooter
-    peashooter.x = 50;
-    peashooter.y = 200
-    this.addElement(peashooter)
+    for(let i=0;i<2;i++){
+      let peashooter = Peashooter.new(this.game);
+      window.p = peashooter
+      peashooter.x = 350;
+      peashooter.y = 200+ i*100
+      this.addElement(peashooter)
+    }
   }
   setupZombies() {
     let zombie = Zombie.new(this.game);
     window.z = zombie
-    zombie.x = 200;
+    zombie.x = 1200;
     zombie.y = 200
     this.addElement(zombie)
+  }
+  update(){
+    super.update()
+    z.x -=0.8;
   }
 }
