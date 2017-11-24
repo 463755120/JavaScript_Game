@@ -16,4 +16,8 @@ class Zombie extends Gnameanimation {
     return new this(game,animationZombie)
   }
   setup() {}
+  update(){
+    super.update()
+    this.x -= 0.5
+  }
 }
