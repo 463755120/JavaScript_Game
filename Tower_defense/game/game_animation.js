@@ -79,4 +79,7 @@ class Gnameanimation {
   changeAnimation(animation) {
     this.animationName = animation;
   }
+  
 }
+
+
